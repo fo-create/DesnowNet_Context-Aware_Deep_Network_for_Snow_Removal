@@ -106,9 +106,11 @@ if __name__ == '__main__':
         if 'conv.weight' in name and 'bn' not in name and 'activation' not in name:
             init.xavier_normal_(param)
             # print(name, param.data)
+            init.xavier_normal_: 这是一种参数初始化方法，通常用于权重初始化。它会根据输入和输出通道的数量自动调整初始化权重的标准差，有助于更好的训练收敛。
         if 'bias' in name:
             init.constant_(param, 0.2)
             # print(name, param.data)
+            init.constant_: 这是将参数初始化为常数的方法，这里将偏置（bias）初始化为常数 0.2。
 
     # prepare dataset
     gt_root = os.path.join(args.root, 'gt')
@@ -142,6 +144,9 @@ if __name__ == '__main__':
 
     optimizer = optim.Adam(net.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10000,verbose=True)
+    scheduler 使用 ReduceLROnPlateau 学习率调度器，用于动态调整学习率。
+    这里的学习率调度器 ReduceLROnPlateau 是根据验证集上的损失动态调整学习率，当损失不再减小时，学习率会减小一半。
+    这有助于在训练过程中更加灵活地调整学习率，提高模型的训练效果。
     if not checkpoint_files:
         # initialization
         for name, param in net.named_parameters():
@@ -152,7 +157,7 @@ if __name__ == '__main__':
     else:
         net.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
-
+    这段代码的目的是在恢复训练时，能够从先前的训练状态开始，而不是从头开始训练。加载优化器状态可以继续之前的优化过程，而不会丢失训练的历史信息。
     net.train()
     while iteration < args.iterations:
         for data in data_loader:
@@ -176,7 +181,8 @@ if __name__ == '__main__':
             loss.backward()
             optimizer.step()
             scheduler.step(loss)
-
+            使用定义的金字塔损失函数 (lw_pyramid_loss) 计算损失，其中包括三个部分：
+            对去雪后图像的损失 (loss1)、对雪掩模的损失 (loss3)、以及可选的去雪后雪掩模的损失 (loss2)
             """
                 Saving the model if necessary
             """
