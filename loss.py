@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
-
+权重衰减是通过在损失函数中添加正则化项来限制模型参数的数值范围，从而防止过拟合。
+函数计算了模型参数的 L2 范数的平方和，并将其添加到原始损失中。最后，返回添加了权重衰减的新损失值，该值用于进行反向传播和优化。
+这有助于使模型参数保持在一个较小的范围内，防止它们在训练过程中变得过大。
 def weight_decay_l2(loss, model, lambda_w):
     wdecay = 0
     for w in model.parameters():
@@ -12,7 +14,10 @@ def weight_decay_l2(loss, model, lambda_w):
     loss = torch.add(loss, lambda_w * wdecay)
     return loss
 
-
+m: 一个图像，通常是模型预测的结果之一。
+hat_m: 另一个图像，通常是与 m 对应的真实标签或其他预测结果。
+tau: 损失金字塔的级别，默认为 6。
+具体而言，它首先进行金字塔池化，然后计算相应层次上的均方差。最后，将所有层次的损失进行累加并返回。
 def lw_pyramid_loss(m, hat_m, tau=6):
     """
      lightweight pyramid loss function
