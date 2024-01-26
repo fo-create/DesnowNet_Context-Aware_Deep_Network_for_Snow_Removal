@@ -10,7 +10,7 @@ sys.path.append('./network')
 from dataset import snow_dataset
 from general import sort_nicely
 from network.DesnowNet import DesnowNet
-
+将 './network' 路径添加到系统路径中，以便 Python 解释器可以找到其中的模块。
 sys.path.append('./network')
 
 if __name__ == '__main__':
