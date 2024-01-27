@@ -33,7 +33,12 @@ class snow_dataset(data.Dataset):
         gt_tensor = toTensor(gt_data)
         mask_tensor = toTensor(mask_data)
         synthetic_tensor = toTensor(synthetic_data)
+        
+gt_tensor.shape[1:] 表示从 gt_tensor 的第二个维度开始（索引为 1 的维度）到最后一个维度的形状。
+在 PyTorch 中，张量的维度是从 0 开始的，因此 gt_tensor.shape[1:] 表示去掉第一个维度（索引为 0 的维度）后的形状。
 
+具体来说，如果 gt_tensor 的形状是 (C, H, W)，其中 C 是通道数，H 是高度，W 是宽度，那么 gt_tensor.shape[1:] 就是 (H, W)，
+即从第二个维度开始（不包括通道数）到最后一个维度的形状。
         if self.is_crop:
             h, w = gt_tensor.shape[1:]
             y = random.randint(0, h - 64)
