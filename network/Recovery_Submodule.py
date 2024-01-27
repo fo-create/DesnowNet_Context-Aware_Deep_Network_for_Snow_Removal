@@ -7,18 +7,18 @@ class Pyramid_maxout(nn.Module):
         super(Pyramid_maxout, self).__init__()
         block = []
         for i in range(beta):
-            block.append(nn.Conv2d(in_channel, depth, 2 * i + 1, 1, padding=i))
+            block.append(nn.Conv2d(in_channel, depth, 2 * i + 1, 1, padding=i))在列表中添加一个卷积层，该层具有指定的输入通道数、深度、卷积核大小和填充。
         self.activation = nn.PReLU(num_parameters=depth)
-        self.conv_module = nn.ModuleList(block)
+        self.conv_module = nn.ModuleList(block)将列表中的卷积层组合成一个 ModuleList 对象，这样它们就可以被 PyTorch 跟踪和管理。
 
     def forward(self, f):
-        for i, module in enumerate(self.conv_module):
+        for i, module in enumerate(self.conv_module):遍历金字塔块中的每个卷积层。
             if i == 0:
                 conv_result = module(f).unsqueeze(0)
             else:
                 temp = module(f).unsqueeze(0)
-                conv_result = torch.cat([conv_result, temp], dim=0)
-        result, _ = torch.max(conv_result, dim=0)
+                conv_result = torch.cat([conv_result, temp], dim=0)对于后续的卷积层，将其结果存储在 temp 中，并在维度 0 上添加一个维度。然后，将 temp 连接到 conv_result 中。
+        result, _ = torch.max(conv_result, dim=0)对所有金字塔块中的卷积结果进行元素-wise 的最大值操作，得到金字塔 Maxout 的最终结果。
         return self.activation(result)
 
 
@@ -35,6 +35,7 @@ class R_t(nn.Module):
         a_hat = self.AE(f_t)
         z_hat[z_hat >= 1] = 1
         z_hat[z_hat <= 0] = 0
+        对透明度估计进行截断，确保其在合理范围内。
         if 'mask' in kwargs.keys() and 'a' in kwargs.keys():
             z = kwargs['mask']
             a = kwargs['a']
